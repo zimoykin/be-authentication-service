@@ -21,6 +21,15 @@ class User extends BaseModel {
     @Prop()
     confirmed: boolean;
 
+
+    constructor(data: any) {
+        super();
+        this.email = data?.email;
+        this.name = data?.name;
+        this.url = data?.url;
+        this.role = data?.role;
+        this.confirmed = data?.confirmed;
+    }
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
