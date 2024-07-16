@@ -58,10 +58,18 @@ export class AuthService {
         }
     }
 
+    async confirm(dto: Record<string, string>) {
+        const user = await this.userRepo.findOne({ email: dto.email });
+        if (!user) throw new NotFoundException();
+        else {
+            return this.userRepo.updateOne({ email: dto.email }, { $set: { confirmed: true } }, { upsert: false, new: false });
+        }
+    }
+
     async login(dto: LoginDto) {
         const user = await this.userRepo.findOne({ email: dto.email, confirmed: true });
         if (!user)
-            throw new NotFoundException('user npt found');
+            throw new NotFoundException('user not found');
         else {
 
             //sec
