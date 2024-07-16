@@ -1,6 +1,7 @@
 import { Exclude, Expose } from "class-transformer";
 import { USER_ROLE } from "../enums/user-role.enum";
 
+@Exclude()
 export class UserOutputDto {
     @Expose()
     email: string;

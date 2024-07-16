@@ -14,14 +14,7 @@ import { PassportModule } from '@nestjs/passport';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService<ConfigVariables>) => {
-
-        const userName = config.get('MONGO_USERNAME');
-        const password = config.get('MONGO_PASSWORD');
-        const database = config.get('MONGO_DATABASE');
-        const templateUri = config.get<string>('MONGO_CONNECTION')!;
-
-        const uri = templateUri.replace('<username>', userName).replace('<password>', password).replace('<database>', database);
-
+        const uri = config.get<string>('MONGO_CONNECTION')!;
         return { uri };
 
       }, inject: [ConfigService]
