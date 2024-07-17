@@ -1,6 +1,6 @@
 import { Exclude, Expose } from "class-transformer";
 import { USER_ROLE } from "../enums/user-role.enum";
-import { CustomResponse } from "src/shared/response-handle.helper";
+import { CustomResponse } from "../../shared/response-handle.helper";
 
 @Exclude()
 export class UserOutputDto {

@@ -6,9 +6,9 @@ import { AuthGuard } from '../shared/guards/user-jwt.guard';
 import { AuthUser } from '../shared/decorators/user.decorator';
 import { IAuthUser } from './interfaces/auth-user.interface';
 import { RefreshDto } from './dtos/refresh.dto';
-import { responseUserDto, UserOutputDto } from './dtos/user-output.dto';
+import { responseUserDto } from './dtos/user-output.dto';
 import { responseTokensDto, TokensResponseDto } from './dtos/tokens-response.dto';
-import { responseStatus, StatusDto } from 'src/shared/dtos/status.dto';
+import { responseStatus, StatusDto } from '../shared/dtos/status.dto';
 import { ConfirmQueryDto } from './dtos/confirm-query.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 

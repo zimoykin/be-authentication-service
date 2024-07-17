@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { ConfigVariables } from "src/service-config";
+import { ConfigVariables } from "../service-config";
 import { Confirmation } from "./schemas/confirmation.schema";
 import { ClientSession, Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";

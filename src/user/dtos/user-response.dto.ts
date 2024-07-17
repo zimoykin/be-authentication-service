@@ -1,5 +1,5 @@
-import { Exclude, Expose, Transform, Type } from "class-transformer";
-import { CustomResponse } from "src/shared/response-handle.helper";
+import { Exclude, Expose, Transform } from "class-transformer";
+import { CustomResponse } from "../../shared/response-handle.helper";
 
 @Exclude()
 export class UserResponseDto {

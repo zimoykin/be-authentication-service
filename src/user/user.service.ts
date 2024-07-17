@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model } from 'mongoose';
 import { User } from './schemas/user.schema';
-import { USER_ROLE } from 'src/auth/enums/user-role.enum';
+import { USER_ROLE } from '../auth/enums/user-role.enum';
 
 @Injectable()
 export class UserService {

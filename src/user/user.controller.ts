@@ -1,11 +1,11 @@
 import { Controller, Get, Logger, NotAcceptableException, Param, UseGuards } from '@nestjs/common';
-import { IAuthUser } from 'src/auth/interfaces/auth-user.interface';
-import { AuthUser } from 'src/shared/decorators/user.decorator';
+import { IAuthUser } from '../auth/interfaces/auth-user.interface';
+import { AuthUser } from '../shared/decorators/user.decorator';
 import { UserService } from './user.service';
-import { USER_ROLE } from 'src/auth/enums/user-role.enum';
+import { USER_ROLE } from '../auth/enums/user-role.enum';
 import { responseUserDto } from './dtos/user-response.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AdminGuard } from 'src/shared/guards/admin-jwt.guard';
+import { AdminGuard } from '../shared/guards/admin-jwt.guard';
 
 @UseGuards(AdminGuard)
 @ApiBearerAuth('Authorization')
