@@ -1,7 +1,7 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ConfigVariables } from "src/service-config";
+import { ConfigVariables } from "../service-config";
 
 @Injectable()
 export class EmailService {
