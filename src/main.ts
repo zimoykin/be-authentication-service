@@ -15,13 +15,13 @@ async function bootstrap() {
 
   // swagger config
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Authentification service')
+    .setDescription('The Authentification API description')
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'Authorization')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, { swaggerOptions: { persistAuthorization: true } });
 
   const conf = app.get(ConfigService<ConfigVariables>);
   const port = conf.get<number>('PORT') ?? 3000;

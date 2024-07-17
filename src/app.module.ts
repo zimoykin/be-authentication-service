@@ -6,8 +6,8 @@ import { ConfigVariables, serviceSchema } from './service-config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -25,7 +25,8 @@ import { PassportModule } from '@nestjs/passport';
     }),
     PassportModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    EmailModule
   ],
   controllers: [AppController],
   providers: [AppService],

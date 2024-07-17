@@ -1,4 +1,43 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Logger, NotAcceptableException, Param, UseGuards } from '@nestjs/common';
+import { IAuthUser } from 'src/auth/interfaces/auth-user.interface';
+import { AuthUser } from 'src/shared/decorators/user.decorator';
+import { UserService } from './user.service';
+import { USER_ROLE } from 'src/auth/enums/user-role.enum';
+import { responseUserDto } from './dtos/user-response.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from 'src/shared/guards/admin-jwt.guard';
 
-@Controller('user')
-export class UserController {}
+@UseGuards(AdminGuard)
+@ApiBearerAuth('Authorization')
+@ApiTags('User')
+@Controller('v1/user')
+export class UserController {
+    private readonly logger = new Logger(UserController.name);
+    constructor(
+        private readonly userService: UserService
+    ) { }
+
+    @Get(':id')
+    async getUserById(
+        @AuthUser() user: IAuthUser,
+        @Param('id') id: string) {
+        this.logger.debug('Getting user by id');
+
+        if (user.role !== USER_ROLE.ADMIN) {
+            throw new NotAcceptableException('Only admin can get all users');
+        }
+        return responseUserDto(this.userService.findUserById(id));
+    }
+
+    @Get()
+    async getAllUsers(
+        @AuthUser() user: IAuthUser
+    ) {
+        this.logger.debug('Getting all users');
+        if (user.role !== USER_ROLE.ADMIN) {
+            throw new NotAcceptableException('Only admin can get all users');
+        }
+        return responseUserDto(this.userService.findAllUsers());
+    }
+
+}
