@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { BaseModel } from "../../shared/basemodel";
+import { USER_ROLE } from "src/auth/enums/user-role.enum";
 
 @Schema({
     timestamps: true,
     collection: 'users'
 })
 class User extends BaseModel {
-    @Prop()
+    @Prop({ unique: true })
     email: string;
 
     @Prop()
@@ -15,10 +16,10 @@ class User extends BaseModel {
     @Prop()
     url: string;
 
-    @Prop()
-    role: 'admin' | 'user';
+    @Prop({ enum: USER_ROLE, required: true, default: USER_ROLE.USER })
+    role: USER_ROLE;
 
-    @Prop()
+    @Prop({ required: true, default: false })
     confirmed: boolean;
 
 
@@ -33,7 +34,14 @@ class User extends BaseModel {
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
-UserSchema.index({ email: 1 });
+UserSchema
+    .index({ email: 1 })
+    .index({ createdAt: 1 }, {
+        partialFilterExpression: { confirmed: false },
+        expireAfterSeconds: 20,
+        name: 'deleting non confirmed users'
+    });
+
 
 
 export { User, UserSchema };

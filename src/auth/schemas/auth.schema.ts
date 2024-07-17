@@ -2,9 +2,10 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { BaseModel } from "../../shared/basemodel";
 import { generateHash, generateSalt } from "../../shared/security";
 
+const collectionName = 'auth';
 @Schema({
     timestamps: true,
-    collection: 'auth'
+    collection: collectionName
 })
 class Auth extends BaseModel {
     @Prop()
@@ -37,4 +38,4 @@ const AuthSchema = SchemaFactory.createForClass(Auth);
 AuthSchema.index({ email: 1 });
 
 
-export { Auth, AuthSchema };
+export { Auth, AuthSchema, collectionName };

@@ -4,13 +4,18 @@ import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Auth, AuthSchema } from './schemas/auth.schema';
-import { User, UserSchema } from '../user/schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
-import { ConfigVariables } from 'src/service-config';
-import { JwtStrategy } from 'src/shared/jwt.strategy';
+import { ConfigVariables } from '../service-config';
+import { JwtStrategy } from '../shared/jwt.strategy';
+import { ConfirmService } from './confirm.service';
+import { Confirmation, ConfirmSchema } from './schemas/confirmation.schema';
+import { EmailModule } from '../email/email.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
+    UserModule,
+    EmailModule,
     JwtModule.registerAsync({
       useFactory: async (config: ConfigService<ConfigVariables>) => {
         return { secret: config.get<string>('JWT_SECRET')! };
@@ -19,10 +24,10 @@ import { JwtStrategy } from 'src/shared/jwt.strategy';
     MongooseModule.forFeature([{
       name: Auth.name, schema: AuthSchema
     }, {
-      name: User.name, schema: UserSchema
+      name: Confirmation.name, schema: ConfirmSchema
     }])
   ],
   controllers: [AuthControllerV1],
-  providers: [AuthService, JwtService, JwtStrategy]
+  providers: [AuthService, ConfirmService, JwtService, JwtStrategy]
 })
 export class AuthModule { }

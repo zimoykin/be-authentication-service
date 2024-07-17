@@ -1,5 +1,6 @@
 import { Exclude, Expose } from "class-transformer";
 import { USER_ROLE } from "../enums/user-role.enum";
+import { CustomResponse } from "src/shared/response-handle.helper";
 
 @Exclude()
 export class UserOutputDto {
@@ -22,3 +23,5 @@ export class UserOutputDto {
         this.confirmed = data?.confirmed;
     }
 }
+
+export const responseUserDto = CustomResponse(UserOutputDto);

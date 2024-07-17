@@ -1,4 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
+import { CustomResponse } from "src/shared/response-handle.helper";
 
 @Exclude()
 export class TokensResponseDto {
@@ -12,3 +13,5 @@ export class TokensResponseDto {
         this.refreshToken = refreshToken;
     }
 }
+
+export const responseTokensDto = CustomResponse(TokensResponseDto);
