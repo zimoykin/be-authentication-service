@@ -34,34 +34,44 @@ export class AuthService {
 
     async register(dto: RegisterDto) {
         const user = await this.userService.findByEmail(dto.email);
-        if (user) throw new ConflictException();
-        else {
+
+        if (user) {
+            throw new ConflictException('User with this email already exists');
+        } else {
             const auth = Auth.new(dto.email, dto.password);
+
             const session = await this.mongoose.startSession();
+            session.startTransaction();
 
-            await this.authRepo
-                .updateOne({ email: dto.email }, { $set: auth }, { upsert: true, new: true })
-                .session(session).catch(err => {
-                    this.logger.debug(err);
-                    session.abortTransaction();
-                    throw new InternalServerErrorException();
-                });
+            try {
+                // Upsert the auth data
+                await this.authRepo
+                    .updateOne({ email: dto.email }, { $set: auth }, { upsert: true })
+                    .session(session);
 
-            await this.userService.updateByEmail(dto.email, dto.role, dto.name, session)
-                .catch(err => {
-                    this.logger.debug(err);
-                    session.abortTransaction();
-                    throw new InternalServerErrorException();
-                });
-            const confirmationLetter = this.confirmService.genereateConfirmationLetter(dto.email);
-            await this.emailService.sendEmail('Confirm your email', confirmationLetter, dto.email).catch(err => {
-                this.logger.debug(err);
-                session.abortTransaction();
-                throw new InternalServerErrorException();
-            });
+                // Update user information
+                await this.userService.updateByEmail(dto.email, dto.role, dto.name, session);
 
-            await this.confirmService.addConfirmationProcess(dto.email);
-            session.endSession();
+                // Send confirmation email
+                const confirmationLetter = this.confirmService.generateConfirmationLetter(dto.email);
+                await this.emailService.sendEmail('Confirm your email', confirmationLetter, dto.email);
+
+                // Add confirmation process
+                await this.confirmService.addConfirmationProcess(dto.email);
+
+                // Commit the transaction
+                await session.commitTransaction();
+            } catch (error) {
+                this.logger.error('Error in registration process:', error);
+
+                // Rollback transaction on error
+                await session.abortTransaction();
+                throw new InternalServerErrorException('Registration failed. Please try again.');
+            } finally {
+                // End the session
+                session.endSession();
+            }
+
             return { status: 'created' };
         }
     }

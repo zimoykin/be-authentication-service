@@ -24,7 +24,7 @@ export class ConfirmService {
         return `${host}/v1/auth/confirm?token=${confirmagtionToken}`;
     }
 
-    genereateConfirmationLetter(email: string) {
+    generateConfirmationLetter(email: string) {
         const secret = `confirmation:${this.config.get('JWT_SECRET')!}`;
         const confirmationToken = this.jwtService.sign({ email: email }, { expiresIn: '1h', secret });
 

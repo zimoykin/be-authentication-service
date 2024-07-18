@@ -1,27 +1,21 @@
 import { Exclude, Expose } from "class-transformer";
 import { USER_ROLE } from "../enums/user-role.enum";
 import { CustomResponse } from "../../shared/response-handle.helper";
+import { BaseDto } from "../../shared/dtos/base.dto";
 
 @Exclude()
-export class UserOutputDto {
+export class UserOutputDto extends BaseDto {
     @Expose()
-    email: string;
+    email?: string;
 
     @Expose()
-    name: string;
+    name?: string;
 
-    @Expose({ name: '___' })
-    role: USER_ROLE;
+    @Expose()
+    role?: USER_ROLE;
 
     @Exclude()
-    confirmed: boolean;
-
-    constructor(data: any) {
-        this.email = data?.email;
-        this.name = data?.name;
-        this.role = data?.role;
-        this.confirmed = data?.confirmed;
-    }
+    confirmed?: boolean;
 }
 
 export const responseUserDto = CustomResponse(UserOutputDto);
