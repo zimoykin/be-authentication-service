@@ -21,7 +21,7 @@ export class ConfirmService {
 
     private getConfirmationLink(confirmagtionToken: string) {
         const host = this.config.get('HOST')!;
-        return `${host}/v1/auth/confirm?token=${confirmagtionToken}`;
+        return `${host}/api/v1/auth/confirm?token=${confirmagtionToken}`;
     }
 
     generateConfirmationLetter(email: string) {
