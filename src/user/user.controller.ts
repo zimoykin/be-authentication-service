@@ -10,7 +10,7 @@ import { AdminGuard } from '../shared/guards/admin-jwt.guard';
 @UseGuards(AdminGuard)
 @ApiBearerAuth('Authorization')
 @ApiTags('User')
-@Controller('v1/user')
+@Controller('api/v1/user')
 export class UserController {
     private readonly logger = new Logger(UserController.name);
     constructor(

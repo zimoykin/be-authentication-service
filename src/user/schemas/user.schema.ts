@@ -22,6 +22,8 @@ class User extends BaseModel {
     @Prop({ required: true, default: false })
     confirmed: boolean;
 
+    @Prop({ default: null, type: Date, required: false })
+    blocked?: Date;
 
     constructor(data: any) {
         super();

@@ -13,7 +13,7 @@ export class UserService {
         @InjectModel(User.name) private readonly userRepo: Model<User>,
     ) { }
     async findUserById(id: string) {
-        return this.userRepo.findOne({ _id: id });
+        return this.userRepo.findOne({ _id: id }).lean();
     }
 
     async findAllUsers() {
@@ -27,7 +27,7 @@ export class UserService {
         if (confirmed != undefined) {
             query['confirmed'] = confirmed;
         }
-        return this.userRepo.findOne(query);
+        return this.userRepo.findOne(query).lean();
     }
 
     async updateByEmail(email: string, role: USER_ROLE, name: string, session: ClientSession) {
