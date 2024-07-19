@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable, InternalServerError
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
-import { Connection, Model } from 'mongoose';
+import { ClientSession, Connection, Model } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Auth } from './schemas/auth.schema';
@@ -12,6 +12,7 @@ import { RefreshDto } from './dtos/refresh.dto';
 import { ConfirmService } from './confirm.service';
 import { EmailService } from '../email/email.service';
 import { UserService } from '../user/user.service';
+import { USER_ROLE } from './enums/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -38,19 +39,14 @@ export class AuthService {
         if (user) {
             throw new ConflictException('User with this email already exists');
         } else {
-            const auth = Auth.new(dto.email, dto.password);
-
             const session = await this.mongoose.startSession();
             session.startTransaction();
 
             try {
-                // Upsert the auth data
-                await this.authRepo
-                    .updateOne({ email: dto.email }, { $set: auth }, { upsert: true })
-                    .session(session);
-
+                // Create user auth record
+                await this.createAuthByEmailAndPassword(dto.email, dto.password, session);
                 // Update user information
-                await this.userService.updateByEmail(dto.email, dto.role, dto.name, session);
+                await this.userService.updateByEmail(dto.email, USER_ROLE.USER, dto.name, session);
 
                 // Send confirmation email
                 const confirmationLetter = this.confirmService.generateConfirmationLetter(dto.email);
@@ -83,19 +79,22 @@ export class AuthService {
             this.logger.debug(`non confirmed user ${tokenData.email} not found`);
             throw new NotFoundException();
         }
-
         const session = await this.mongoose.startSession();
+        session.startTransaction();
         try {
             await this.userService.confirmUserByEmail(tokenData.email, session);
             await this.emailService.sendEmail('Email confirmed', 'Your email has been confirmed', tokenData.email);
-            await this.confirmService.deleteConfirmationProcess(tokenData.email, session);
+            // await this.confirmService.deleteConfirmationProcess(tokenData.email, session);
+            await session.commitTransaction();
         } catch (error) {
             this.logger.debug(error);
             await session.abortTransaction();
             throw error;
         }
+        finally {
+            session.endSession();
+        }
 
-        await session.endSession();
         return { status: 'confirmed' };
 
     }
@@ -112,7 +111,7 @@ export class AuthService {
             Object.assign(auth, authDocument);
 
             if (!auth.checkPassword(dto.password)) {
-                throw new BadRequestException();
+                throw new BadRequestException('wrong password or email');
             };
 
             const secret = this.config.get('JWT_SECRET');
@@ -150,5 +149,17 @@ export class AuthService {
         await this.userService.deleteByEmail(email);
 
         return { status: 'ok' };
+    }
+
+    async deleteByUserId(userId: string, session: ClientSession) {
+        await this.authRepo.deleteMany({ userId: userId }).session(session);
+    }
+
+    async createAuthByEmailAndPassword(email: string, password: string, session: ClientSession) {
+        // Upsert the auth data
+        const auth = Auth.new(email, password);
+        return this.authRepo
+            .updateOne({ email: email }, { $set: auth }, { upsert: true })
+            .session(session);
     }
 }

@@ -18,6 +18,9 @@ export class UserResponseDto {
 
     @Expose()
     confirmed?: boolean;
+
+    @Expose()
+    blocked?: Date;
 }
 
 export const responseUserDto = CustomResponse(UserResponseDto);
