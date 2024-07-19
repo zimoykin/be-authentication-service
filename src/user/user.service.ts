@@ -26,7 +26,8 @@ export class UserService {
 
     async findByEmail(email: string, confirmed?: boolean) {
         const query = {
-            email: email
+            email: email,
+            blocked: null
         };
         if (confirmed != undefined) {
             query['confirmed'] = confirmed;

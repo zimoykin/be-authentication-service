@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectConnection } from "@nestjs/mongoose";
 import { Connection } from "mongoose";
 import { AuthService } from "../auth/auth.service";
@@ -7,10 +7,10 @@ import { UserService } from "../user/user.service";
 import { USER_ROLE } from "src/auth/enums/user-role.enum";
 import { ConfigVariables } from "src/service-config";
 import { ConfigService } from "@nestjs/config";
-import { RegisterDto } from "src/auth/dtos/register.dto";
+
 
 @Injectable()
-export class AdminService implements OnModuleInit {
+export class AdminService {
     private readonly logger = new Logger(AdminService.name);
     constructor(
         private readonly userService: UserService,
@@ -21,35 +21,6 @@ export class AdminService implements OnModuleInit {
         // @ts-ignore //
         @InjectConnection() private readonly mongoose: Connection,
     ) { }
-    async onModuleInit() {
-        this.logger.debug('Admin service initialized');
-        const seedAdminEmail = this.configService.get<string>('USER_ADMIN_EMAIL')!;
-        const seedAdminPassword = this.configService.get<string>('USER_ADMIN_PASSWORD')!;
-
-        const seed = await this.userService.findByEmail(seedAdminEmail);
-
-        if (!seed) {
-            this.logger.debug('Seeding admin user');
-            const session = await this.mongoose.startSession();
-            session.startTransaction();
-            try {
-                await this.authService.createAuthByEmailAndPassword(seedAdminEmail, seedAdminPassword, session);
-                await this.userService.updateByEmail(seedAdminEmail, USER_ROLE.ADMIN, 'admin', session);
-                await this.userService.confirmUserByEmail(seedAdminEmail, session);
-                // await this.userService.updateByEmail(seedAdminEmail, USER_ROLE.ADMIN, 'admin', session);
-
-                await session.commitTransaction();
-                this.logger.debug(`Admin user seeded ${seedAdminEmail}`);
-            } catch (error) {
-                this.logger.debug(error);
-                await session.abortTransaction();
-                throw error;
-            } finally {
-                session.endSession();
-            }
-        }
-
-    }
 
     async getBlockedUsers() {
         return this.userService.findAllBlockedUsers();
