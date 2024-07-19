@@ -104,9 +104,9 @@ export class AuthService {
         if (!user)
             throw new NotFoundException('user not found');
         else {
-
-            //sec
             const authDocument = await this.authRepo.findOne({ email: dto.email }).lean();
+            if (!authDocument)
+                throw new NotFoundException('user not found');
             const auth = new Auth();
             Object.assign(auth, authDocument);
 
