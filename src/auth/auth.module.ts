@@ -28,6 +28,7 @@ import { UserModule } from '../user/user.module';
     }])
   ],
   controllers: [AuthControllerV1],
-  providers: [AuthService, ConfirmService, JwtService, JwtStrategy]
+  providers: [AuthService, ConfirmService, JwtService, JwtStrategy],
+  exports:[AuthService]
 })
 export class AuthModule { }

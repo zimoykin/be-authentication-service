@@ -38,10 +38,10 @@ export class AuthControllerV1 {
     async confirm(
         @Query() dto: ConfirmQueryDto,
         @Res() res: Response
-    ): Promise<StatusDto> {
+    ) {
         return responseStatus(
             this.service.confirm(dto.token)
-        ).finally(() => {
+        ).then(() => {
             res.redirect('/confirmed');
         });
     }

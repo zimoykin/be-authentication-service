@@ -19,11 +19,6 @@ export class RegisterDto implements IRegister {
     @ApiProperty({ example: 'https://admin.com' })
     url: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ enum: USER_ROLE, example: 'admin' })
-    role: USER_ROLE;
-
     @IsNotEmpty()
     @IsString()
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
@@ -34,7 +29,6 @@ export class RegisterDto implements IRegister {
         this.email = data?.email;
         this.name = data?.name;
         this.url = data?.url;
-        this.role = data?.role;
         this.password = data?.password;
     }
 }

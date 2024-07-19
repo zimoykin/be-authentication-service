@@ -17,12 +17,17 @@ export class UserService {
     }
 
     async findAllUsers() {
-        return this.userRepo.find({ confirmed: true }).lean();
+        return this.userRepo.find({ confirmed: true, blocked: null }).lean();
+    }
+
+    async findAllBlockedUsers() {
+        return this.userRepo.find({ confirmed: true, blocked: { $ne: null } }).lean();
     }
 
     async findByEmail(email: string, confirmed?: boolean) {
         const query = {
-            email: email
+            email: email,
+            blocked: null
         };
         if (confirmed != undefined) {
             query['confirmed'] = confirmed;
@@ -40,5 +45,18 @@ export class UserService {
 
     async deleteByEmail(email: string) {
         return this.userRepo.deleteOne({ email: email });
+    }
+
+
+    async blockUserById(userId: string) {
+        return this.userRepo.updateOne({ _id: userId }, { $set: { blocked: new Date() } }, { upsert: false, new: true });
+    }
+
+    async unblockUserById(userId: string) {
+        return this.userRepo.updateOne({ _id: userId }, { $set: { blocked: null } }, { upsert: false, new: true });
+    }
+
+    async deleteByUserId(userId: string, session: ClientSession) {
+        return this.userRepo.deleteOne({ _id: userId }).session(session);
     }
 }
