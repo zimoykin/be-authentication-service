@@ -162,4 +162,8 @@ export class AuthService {
             .updateOne({ email: email }, { $set: auth }, { upsert: true })
             .session(session);
     }
+
+    async updateUserPassword(auth: Auth) {
+        return this.authRepo.updateOne({ email: auth.email }, { $set: auth });
+    }
 }

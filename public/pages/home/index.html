@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Page</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="content">
+        <h1>You are in start-page.</h1>
+        <div id="userInfo"></div>
+    </div>
+    <script src="../../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accessToken = localStorage.getItem('accessToken');
+
+            if (accessToken) {
+                fetch('/api/v1/auth/me', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('userInfo').innerText = `Welcome, ${data.name ?? ''} (${data.email ?? ''})!`;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('userInfo').innerText = 'Failed to retrieve user info.';
+                    });
+            } else {
+                document.getElementById('userInfo').innerText = 'No access token found.';
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

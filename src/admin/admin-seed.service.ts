@@ -33,7 +33,6 @@ export class AdminSeedService implements OnModuleInit {
                 await this.authService.createAuthByEmailAndPassword(seedAdminEmail, seedAdminPassword, session);
                 await this.userService.updateByEmail(seedAdminEmail, USER_ROLE.ADMIN, 'admin', session);
                 await this.userService.confirmUserByEmail(seedAdminEmail, session);
-                // await this.userService.updateByEmail(seedAdminEmail, USER_ROLE.ADMIN, 'admin', session);
 
                 await session.commitTransaction();
                 this.logger.debug(`Admin user seeded ${seedAdminEmail}`);
