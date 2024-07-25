@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Entry</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="container">
+        <h1>Enter Your 6-Digit Code</h1>
+
+        <form id="codeForm">
+            <label for="codeInput">6-Digit Code:</label>
+            <input type="text" id="codeInput" name="code" maxlength="6" required>
+            <label for="passwordInput">New Password:</label>
+            <input type="text" id="passwordInput" name="password" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="errorMessage" class="error-message" style="display: none;">
+            Failed to submit. Please try again.
+            <p id="errorHint"></p>
+        </div>
+    </div>
+    <script src="../../script.js"> </script>
+    <script>
+        // Function to get query parameter by name
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const errorBlock = document.getElementById('errorMessage');
+        const errorHint = document.getElementById('errorHint');
+
+        const token = getQueryParam('token');
+        document.getElementById('codeForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const code = document.getElementById('codeInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const payload = { token: token, code: code, password: password };
+
+            errorBlock.style.display = 'none';
+            errorHint.innerText = '';
+
+            fetch('/api/v1/recovery/confirm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(response => response.json())
+                .then((data) => {
+                    if (data.statusCode === 400) {
+                        if (errorHint) {
+                            errorHint.innerText = data.message;
+                        }
+                    }
+                    errorBlock.style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    document.getElementById('errorMessage').style.display = 'block';
+                });
+        });
+    </script>
+</body>
+
+</html>

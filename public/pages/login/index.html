@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="container">
+        <h1>Login</h1>
+
+        <form id="loginForm">
+            <label for="emailInput">Email:</label>
+            <input type="email" id="emailInput" name="email" required>
+            <label for="passwordInput">Password:</label>
+            <input type="password" id="passwordInput" name="password" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="errorMessage" class="error-message" style="display: none;">Failed to submit. Please try again.</div>
+    </div>
+
+    <script src="../../script.js"> </script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const payload = {
+                email: email,
+                password: password
+            };
+
+            fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success', data);
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                    window.location.href = '/';
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    document.getElementById('errorMessage').style.display = 'block';
+                });
+        });
+    </script>
+</body>
+
+</html>

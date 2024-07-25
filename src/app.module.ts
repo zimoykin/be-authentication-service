@@ -11,6 +11,7 @@ import { EmailModule } from './email/email.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AdminModule } from './admin/admin.module';
+import { RecoveryModule } from './recovery/recovery.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { AdminModule } from './admin/admin.module';
     UserModule,
     AuthModule,
     EmailModule,
-    AdminModule
+    AdminModule,
+    RecoveryModule
   ],
   controllers: [AppController],
   providers: [AppService],
