@@ -1,0 +1,47 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x' # Specify your Node.js version here
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the application
+      run: npm run build
+
+    - name: Zip the build
+      run: zip -r app.zip . -x node_modules/\* .git/\* .github/\*
+
+    - name: Deploy to Elastic Beanstalk
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+      run: |
+        aws elasticbeanstalk create-application-version \
+          --application-name "${{ secrets.EB_APP_NAME }}" \
+          --version-label "v-${{ github.run_id }}" \
+          --source-bundle S3Bucket=my-bucket,S3Key=my-app-${{ github.run_id }}.zip
+
+        aws elasticbeanstalk update-environment \
+          --application-name "${{ secrets.EB_APP_NAME }}" \
+          --environment-name "${{ secrets.EB_ENV_NAME }}" \
+          --version-label "v-${{ github.run_id }}"
+
+    - name: Clean up
+      run: rm app.zip
