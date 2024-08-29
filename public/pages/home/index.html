@@ -13,6 +13,9 @@
     <div class="content">
         <h1>You are in start-page.</h1>
         <div id="userInfo"></div>
+        <div>
+            <textarea id="token"></textarea>
+        </div>
     </div>
     <script src="../../script.js"></script>
     <script>
@@ -35,6 +38,7 @@
                     })
                     .then(data => {
                         document.getElementById('userInfo').innerText = `Welcome, ${data.name ?? ''} (${data.email ?? ''})!`;
+                        document.getElementById('token').innerText = localStorage.getItem('accessToken');
                     })
                     .catch(error => {
                         console.error('Error:', error);

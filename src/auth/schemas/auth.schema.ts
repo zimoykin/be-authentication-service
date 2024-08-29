@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { BaseModel } from "../../shared/basemodel";
 import { generateHash, generateSalt } from "../../shared/security";
 
-const collectionName = 'auth';
+const collectionName = 'vocabulary_auth';
 @Schema({
     timestamps: true,
     collection: collectionName

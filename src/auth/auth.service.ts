@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ClientSession, Connection, Model } from 'mongoose';
-import { User } from '../user/schemas/user.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Auth } from './schemas/auth.schema';
 import { ConfigService } from '@nestjs/config';
@@ -136,7 +135,7 @@ export class AuthService {
         else throw new BadRequestException();
     }
 
-    async me(userId: string): Promise<User> {
+    async me(userId: string): Promise<any> {
         const user = await this.userService.findUserById(userId);
         if (!user) {
             throw new NotFoundException();
@@ -155,7 +154,7 @@ export class AuthService {
         await this.authRepo.deleteMany({ userId: userId }).session(session);
     }
 
-    async createAuthByEmailAndPassword(email: string, password: string, session: ClientSession) {
+    async createAuthByEmailAndPassword(email: string, password: string, session: ClientSession): Promise<any> {
         // Upsert the auth data
         const auth = Auth.new(email, password);
         return this.authRepo
@@ -163,7 +162,7 @@ export class AuthService {
             .session(session);
     }
 
-    async updateUserPassword(auth: Auth) {
+    async updateUserPassword(auth: Auth): Promise<any> {
         return this.authRepo.updateOne({ email: auth.email }, { $set: auth });
     }
 }

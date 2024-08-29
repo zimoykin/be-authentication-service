@@ -87,7 +87,7 @@ export class ConfirmService {
         return confirmation;
     }
 
-    async deleteConfirmationProcess(email: string, session: ClientSession) {
+    async deleteConfirmationProcess(email: string, session: ClientSession): Promise<any> {
         return this.confirmationRepo.deleteOne({ email: email }).session(session);
     }
 
