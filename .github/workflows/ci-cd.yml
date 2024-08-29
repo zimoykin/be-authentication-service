@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       library:
-        description: 'Library to process'
+        description: 'Deployment'
         required: true
         type: choice
         options: 
