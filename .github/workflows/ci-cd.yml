@@ -21,12 +21,12 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20.x' # Specify your Node.js version here
+        node-version: '20.x'
 
     - name: Create .npmrc file in the project directory
       run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
-          echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
+        echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 
     - name: Install dependencies
       run: npm ci
@@ -35,7 +35,9 @@ jobs:
       run: npm run build
 
     - name: Zip the build
-      run: zip -r app.zip . -x node_modules/\* .git/\* .github/\*
+      run: |
+        zip -r app.zip . \
+        -x "node_modules/*" ".git/*" ".github/*"
 
     - name: Deploy to Elastic Beanstalk
       env:
