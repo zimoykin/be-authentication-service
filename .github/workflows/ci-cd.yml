@@ -23,14 +23,6 @@ jobs:
       with:
         node-version: '20.x' # Specify your Node.js version here
 
-    - name: Set up npmrc 
-      uses: actions/setup-node@v4
-      with:
-          node-version: '20.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@zimoykin'
-    - name: Fix permissions
-      run: sudo chown -R $USER:$USER .
     - name: Create .npmrc file in the project directory
       run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
