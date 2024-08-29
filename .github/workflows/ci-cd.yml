@@ -1,9 +1,14 @@
 name: Deploy to AWS Elastic Beanstalk
 
 on:
-  push:
-    branches:
-      - prod
+  workflow_dispatch:
+    inputs:
+      library:
+        description: 'Library to process'
+        required: true
+        type: choice
+        options: 
+          - 'deploy'
 
 jobs:
   deploy:
