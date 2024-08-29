@@ -23,13 +23,28 @@ jobs:
       with:
         node-version: '20.x'
 
+    - name: Clear NPM cache
+      run: npm cache clean --force
+
+    - name: Configure NPM
+      run: |
+        npm config set fetch-retries 5
+        npm config set fetch-retry-mintimeout 20000
+        npm config set fetch-retry-maxtimeout 60000
+
     - name: Create .npmrc file in the project directory
       run: |
         echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
         echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 
-    - name: Install dependencies
-      run: npm ci
+    - name: Install dependencies with retry
+      run: |
+        retries=3
+        count=0
+        until npm ci || [ $count -eq $retries ]; do
+          echo "Retrying npm ci ($((count++))/$retries)..."
+          sleep 5
+        done
 
     - name: Build the application
       run: npm run build
