@@ -25,7 +25,7 @@ export class RecoveryRepository {
         return this.model.findOne({ email }).lean();
     }
 
-    async deleteRecoveryProcess(email: string) {
+    async deleteRecoveryProcess(email: string): Promise<any> {
         return this.model.deleteOne({ email }).lean();
     }
 }

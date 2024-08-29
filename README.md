@@ -22,6 +22,15 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## build Docker file
+```bash
+docker build --no-cache --build-arg NPM_TOKEN={your_npm_token} -t authentification-app .
+```
+# compose
+```bash
+NPM_TOKEN={your_npm_token} docker-compose up -d --no-cache
+```
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
