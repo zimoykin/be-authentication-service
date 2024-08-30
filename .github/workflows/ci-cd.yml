@@ -26,12 +26,6 @@ jobs:
     - name: Clear NPM cache
       run: npm cache clean --force
 
-    - name: Configure NPM
-      run: |
-        npm config set fetch-retries 5
-        npm config set fetch-retry-mintimeout 20000
-        npm config set fetch-retry-maxtimeout 60000
-
     - name: Create .npmrc file in the project directory
       run: |
         echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
