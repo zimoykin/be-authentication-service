@@ -31,14 +31,8 @@ jobs:
         echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
         echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 
-    - name: Install dependencies with retry
-      run: |
-        retries=3
-        count=0
-        until npm ci || [ $count -eq $retries ]; do
-          echo "Retrying npm ci ($((count++))/$retries)..."
-          sleep 5
-        done
+    - name: Install dependencies
+      run: npm install
 
     - name: Build the application
       run: npm run build
