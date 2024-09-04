@@ -26,8 +26,11 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+
     - name: Zip the build
-      run: zip -r app.zip . -x node_modules/\* .git/\* .github/\*
+      run: |
+        zip -r app.zip . \
+        -x "node_modules/*" ".git/*" ".github/*"
 
     - name: Deploy to Elastic Beanstalk
       env:
