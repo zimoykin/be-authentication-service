@@ -37,4 +37,3 @@ lerna-debug.log*
 .env
 *.rest
 .vscode
-.npmrc
