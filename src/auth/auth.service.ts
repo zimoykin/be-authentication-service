@@ -32,7 +32,14 @@ export class AuthService {
         @InjectModel(Auth.name) private readonly authRepo: Model<Auth>
     ) { }
 
-    async register(dto: RegisterDto) {
+    /**
+     * Registers a new user
+     * @param dto - registration data
+     * @throws ConflictException if user with given email already exists
+     * @throws InternalServerErrorException if registration failed
+     * @returns { status: 'created' }
+     */
+    async register(dto: RegisterDto): Promise<{ status: 'created'; }> {
         const user = await this.userService.findByEmail(dto.email);
 
         if (user) {
@@ -47,12 +54,12 @@ export class AuthService {
                 // Update user information
                 await this.userService.updateByEmail(dto.email, USER_ROLE.USER, dto.name, session);
 
-                // Send confirmation email
-                const confirmationLetter = this.confirmService.generateConfirmationLetter(dto.email);
-                await this.emailService.sendEmail('Confirm your email', confirmationLetter, dto.email);
-
                 // Add confirmation process
-                await this.confirmService.addConfirmationProcess(dto.email);
+                const confirmation = await this.confirmService.addConfirmationProcess(dto.email);
+
+                // Send confirmation email
+                const confirmationLetter = this.confirmService.generateConfirmationLetter(dto.email, confirmation.code);
+                await this.emailService.sendEmail('Confirm your email', confirmationLetter, dto.email);
 
                 // Commit the transaction
                 await session.commitTransaction();
@@ -71,7 +78,7 @@ export class AuthService {
         }
     }
 
-    async confirm(token: string) {
+    async confirm(token: string, code: string) {
         const tokenData = await this.jwtService.verifyAsync<{ email: string; }>(token, { secret: `confirmation:${this.config.get('JWT_SECRET')!}` });
         const user = await this.userService.findByEmail(tokenData.email, false);
         if (!user) {
@@ -81,6 +88,13 @@ export class AuthService {
         const session = await this.mongoose.startSession();
         session.startTransaction();
         try {
+            const confirmation = await this.confirmService.getConfirmationProcess(tokenData.email);
+            if (!confirmation) {
+                throw new NotFoundException();
+            }
+            if (confirmation.code !== code) {
+                throw new BadRequestException('Invalid confirmation code');
+            }
             await this.userService.confirmUserByEmail(tokenData.email, session);
             await this.emailService.sendEmail('Email confirmed', 'Your email has been confirmed', tokenData.email);
             // await this.confirmService.deleteConfirmationProcess(tokenData.email, session);

@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Logger, Post } from "@nestjs/common";
 import { StartRecoveryDto } from "./dtos/start-recovery.dto";
 import { RecoveryService } from "./recovery.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -14,6 +14,8 @@ export class RecoveryController {
         private readonly recoveryService: RecoveryService
     ) { }
 
+
+    @HttpCode(200)
     @Post('start-process')
     async startRecoveryProcess(
         @Body() startRecoveryDto: StartRecoveryDto
@@ -22,6 +24,7 @@ export class RecoveryController {
         return responseStatus(this.recoveryService.startRecoveryProcess(startRecoveryDto.email));
     }
 
+    @HttpCode(200)
     @Post('confirm')
     async confirmRecoveryProcess(
         @Body() dto: RecoveryConfirmDto

@@ -3,9 +3,9 @@ import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 export class ConfirmQueryDto {
     @IsString()
     @IsNotEmpty()
-    token: string;
+    token?: string;
 
-    constructor(token: string) {
-        this.token = token;
-    }
+    @IsString()
+    @IsNotEmpty()
+    code?: string;
 }
