@@ -8,10 +8,17 @@ class Confirmation {
     @Prop()
     email: string;
 
+    @Prop()
+    code: string;
+
     constructor(
         email: string
     ) {
         this.email = email;
+        this.code = '';
+        for (let i = 0; i < 6; i++) {
+            this.code += Math.floor(Math.random() * 10);
+        }
     }
 }
 

@@ -24,10 +24,9 @@ export class ConfirmService {
         return `${host}/api/v1/auth/confirm?token=${confirmagtionToken}`;
     }
 
-    generateConfirmationLetter(email: string) {
+    generateConfirmationLetter(email: string, confirmationCode: string) {
         const secret = `confirmation:${this.config.get('JWT_SECRET')!}`;
         const confirmationToken = this.jwtService.sign({ email: email }, { expiresIn: '1h', secret });
-
         const htmlConfirmLetter = `
         <!DOCTYPE html>
             <html lang="en">
@@ -71,7 +70,7 @@ export class ConfirmService {
             </head>
             <body>
                 <div class="container">
-                    <p>Someone started the registration process. If it was you, please confirm your intention by clicking the link below:</p>
+                    <p>Someone started the registration process. <b>Code: ${confirmationCode} </b>. If it was you, please confirm your intention by clicking the link below:</p>
                     <a href="${this.getConfirmationLink(confirmationToken)}" class="btn">Confirm Registration</a>
                 </div>
             </body>
@@ -85,6 +84,10 @@ export class ConfirmService {
         const confirmation = new Confirmation(email);
         await this.confirmationRepo.create(confirmation);
         return confirmation;
+    }
+
+    async getConfirmationProcess(email: string): Promise<Confirmation> {
+        return this.confirmationRepo.findOne({ email: email }).lean();
     }
 
     async deleteConfirmationProcess(email: string, session: ClientSession): Promise<any> {
