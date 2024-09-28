@@ -18,7 +18,8 @@ export class EmailService {
             to: email,
             subject: subject,
             html: body,
-            from: this.config.get<string>('EMAIL_USERNAME') ?? 'admin'
+            from: this.config.get<string>('EMAIL_USERNAME') ?? 'admin',
+            sender: 'Mary from Gallery LLC'
             //TODO: check how to use templates here
         });
     }
