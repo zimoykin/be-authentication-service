@@ -1,6 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
 import { IRegister } from "../interfaces/register.interface";
-import { USER_ROLE } from "../enums/user-role.enum";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class RegisterDto implements IRegister {
@@ -14,6 +13,7 @@ export class RegisterDto implements IRegister {
     @ApiProperty({ example: 'admin' })
     name: string;
 
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ example: 'https://admin.com' })
