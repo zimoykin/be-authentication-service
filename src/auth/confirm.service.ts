@@ -21,8 +21,9 @@ export class ConfirmService {
 
     private getConfirmationLink(confirmagtionToken: string) {
         const host = this.config.get('HOST')!;
-        return `${host}/confirmation?token=${confirmagtionToken}`;
+        return `${host}/register/confirm?token=${confirmagtionToken}`;
     }
+
 
     generateConfirmationLetter(email: string, confirmationCode: string) {
         const secret = `confirmation:${this.config.get('JWT_SECRET')!}`;
