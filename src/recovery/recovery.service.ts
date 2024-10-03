@@ -21,7 +21,7 @@ export class RecoveryService {
     ) { }
     private getConfirmationLink(confirmationToken: string) {
         const host = this.config.get('HOST')!;
-        return `${host}/pages/recovery?token=${confirmationToken}`;
+        return `${host}/recovery/confirm?token=${confirmationToken}`;
     }
 
     private async veryifyTokenOrThrowAnError(token: string) {

@@ -12,6 +12,7 @@ import { ConfirmService } from './confirm.service';
 import { EmailService } from '../email/email.service';
 import { UserService } from '../user/user.service';
 import { USER_ROLE } from './enums/user-role.enum';
+import { AmqpSender, InjectSender } from '@zimoykin/amqp';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,8 @@ export class AuthService {
         @InjectConnection() private readonly mongoose: Connection,
         /* eslint-disable */
         // @ts-ignore //
-        @InjectModel(Auth.name) private readonly authRepo: Model<Auth>
+        @InjectModel(Auth.name) private readonly authRepo: Model<Auth>,
+        @InjectSender('profile') private readonly amqpSender: AmqpSender
     ) { }
 
     /**
@@ -98,6 +100,12 @@ export class AuthService {
             await this.userService.confirmUserByEmail(tokenData.email, session);
             await this.emailService.sendEmail('Email confirmed', 'Your email has been confirmed', tokenData.email);
             // await this.confirmService.deleteConfirmationProcess(tokenData.email, session);
+            await this.amqpSender.sendMessage({
+                name: user.name,
+                email: user.email,
+                id: user._id.toString(),
+                role: user.role
+            });
             await session.commitTransaction();
         } catch (error) {
             this.logger.debug(error);
