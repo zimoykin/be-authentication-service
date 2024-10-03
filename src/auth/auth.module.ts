@@ -11,9 +11,11 @@ import { ConfirmService } from './confirm.service';
 import { Confirmation, ConfirmSchema } from './schemas/confirmation.schema';
 import { EmailModule } from '../email/email.module';
 import { UserModule } from '../user/user.module';
+import { AmqpModule } from '@zimoykin/amqp';
 
 @Module({
   imports: [
+    AmqpModule.forFeature('profile'),
     UserModule,
     EmailModule,
     JwtModule.registerAsync({
@@ -29,6 +31,6 @@ import { UserModule } from '../user/user.module';
   ],
   controllers: [AuthControllerV1],
   providers: [AuthService, ConfirmService, JwtService, JwtStrategy],
-  exports:[AuthService]
+  exports: [AuthService]
 })
 export class AuthModule { }

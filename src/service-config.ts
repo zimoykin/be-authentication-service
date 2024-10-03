@@ -13,7 +13,8 @@ const schema = {
   EMAIL_PORT: Joi.number().required(),
   //seed
   USER_ADMIN_EMAIL: Joi.string().email().required(),
-  USER_ADMIN_PASSWORD: Joi.string().required()
+  USER_ADMIN_PASSWORD: Joi.string().required(),
+  RMQ_URL: Joi.string().required()
 };
 export const serviceSchema = Joi.object(schema);
 export type ConfigVariables = typeof schema;
